@@ -25,25 +25,17 @@ fn read_file_lines(file_path: &str) -> io::Result<Vec<String>> {
 }
 
 fn check_color_amount(cubes: &str) -> bool{
-    let mut char_iter = cubes.chars();
-    let mut amount: i32 = 0;
+    //println!("cubes: {}", cubes);
+    let digit_and_color: Vec<&str> = cubes.split(' ').collect();
+    let amount: i32 = digit_and_color[0].parse::<i32>().unwrap();
 
-    if let Some(first_char) = char_iter.next() { //funkar ej  iom att det finns värden med två siffor. tex 20
-        amount = first_char as i32;
-        amount = amount - 48;
-        println!("amount: {}", amount);
-    } else {
-        println!("The string is empty.");
-    }
-
-    if cubes.contains("red") {
+    if digit_and_color[1].contains("red") {
         if amount > MAX_RED {
-            
             return false;
         } else {
             return true;
         }
-    } else if cubes.contains("green") {
+    } else if digit_and_color[1].contains("green") {
         if amount > MAX_GREEN {
             return false;
         } else {
@@ -59,34 +51,37 @@ fn check_color_amount(cubes: &str) -> bool{
 
 }
 
-fn each_game(game: &str) {
+fn each_game(game: &str) -> i32{
+    println!("{}", game);
     let substrings_game_id: Vec<&str> = game.split(':').collect();
-    let char_iter = substrings_game_id[0].chars();
-    if let Some(game_id) = char_iter.last() { //Some??
-        println!("Game ID: {}", game_id);
-    } else {
-        println!("The string is empty.");
-    }
+    let game_id: i32 = substrings_game_id[0].replace("Game ","").parse::<i32>().unwrap();
+    //println!("game ID: {}", game_id);
+
     let substrings_split_comma: Vec<&str> = substrings_game_id[1].split(';').collect();
 
     for substring in &substrings_split_comma {
+        //println!("Round: {}", substring.trim());
         if substring.contains(',') {
             let substring_split_color: Vec<&str> = substring.split(',').collect();
             for subtring_color in &substring_split_color {
                 if !check_color_amount(&subtring_color.trim()) {
-                    println!("This was an impossible game")
-                } else {
-                    println!("This was a possible game")
+                    println!("This was an impossible game");
+                    return 0;
                 }
             }
+        } else {
+            if !check_color_amount(&substring.trim()) {
+                println!("This was an impossible game");
+                return 0;
+            }
         }
-        println!("Substring: {}", substring.trim());
     }
+    return game_id;
 }
 
 fn main() {
     let mut read_lines = Vec::new();
-    match read_file_lines("example.txt") {
+    match read_file_lines("input.txt") {
         Ok(lines) => { //behäver man alltid hantera ok och err när man kallat på en fn?
             read_lines = lines
         }
@@ -95,9 +90,11 @@ fn main() {
         }
     }
 
+    let mut sum: i32 = 0;
     for line in &read_lines {
-        each_game(line);
+        sum = sum + each_game(line);
     }
+    println!("Sum: {}", sum);
     //Max red = 12
     //Max green = 13
     //Max blue = 14
