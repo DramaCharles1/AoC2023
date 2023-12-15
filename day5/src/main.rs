@@ -21,6 +21,12 @@ fn read_file_lines(file_path: &str) -> io::Result<Vec<String>> {
     Ok(lines)
 }
 
+struct map {
+    destination: Vec<int>,
+    source: Vec<int>,
+    range: i32,
+}
+
 fn main() {
     let mut read_lines = Vec::new();
     match read_file_lines("example.txt") {
@@ -31,9 +37,25 @@ fn main() {
             eprintln!("Error reading file: {}", e);
         }
     }
-    for line in read_lines {
-        println!(line);
+    let seeds: Vec<i32> = Vec<i32>::new();
+    let seed_to_soil_destination = Vec<i32>::new();
+    let seed_to_soil_source = Vec<i32>::new();
+    let seed_to_soil_range: i32 = 0; 
+
+    for i in 0..read_lines.len() {
+        let line: &String = read_lines[i];
+        println!(read_lines[i]);
+        if line.contains("seeds:") {
+            //Split line acc to seeds
+        } 
+        if read_lines[i].contains("seed-to-soil map:") {
+            println!("Next lines are seed-to-soil")
+
+        }
     }
 }
 
+//part 1:
 //goal: so they'd like to know the closest location that needs a seed.
+//Map source to destination trough each map to get location for each seed
+
