@@ -35,3 +35,5 @@ fn main() {
         println!(line);
     }
 }
+
+//goal: so they'd like to know the closest location that needs a seed.
