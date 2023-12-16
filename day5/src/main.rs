@@ -21,9 +21,9 @@ fn read_file_lines(file_path: &str) -> io::Result<Vec<String>> {
     Ok(lines)
 }
 
-struct map {
-    destination: Vec<int>,
-    source: Vec<int>,
+struct Map {
+    destination: Vec<i32>,
+    source: Vec<i32>,
     range: i32,
 }
 
@@ -37,22 +37,53 @@ fn main() {
             eprintln!("Error reading file: {}", e);
         }
     }
-    let seeds: Vec<i32> = Vec<i32>::new();
-    let seed_to_soil_destination = Vec<i32>::new();
-    let seed_to_soil_source = Vec<i32>::new();
-    let seed_to_soil_range: i32 = 0; 
+
+    let mut seed_start: usize = 1;
+    let mut seed_soil_start: usize = 0;
+    let mut soil_fertilizer_start: usize = 0;
+    let mut fertilizer_water_start: usize = 0;
+    let mut water_light_start: usize = 0;
+    let mut light_temperature_start: usize = 0;
+    let mut temperature_humidity_start: usize = 0;
+    let mut humidity_location_start: usize = 0;
 
     for i in 0..read_lines.len() {
-        let line: &String = read_lines[i];
-        println!(read_lines[i]);
-        if line.contains("seeds:") {
-            //Split line acc to seeds
-        } 
+        let line: &String = &read_lines[i];
+        //println!("{}",read_lines[i]);
         if read_lines[i].contains("seed-to-soil map:") {
-            println!("Next lines are seed-to-soil")
-
+            //Seed to soil starts at i + 1
+            seed_soil_start = i + 1;
+        }
+        else if read_lines[i].contains("soil-to-fertilizer map:") {
+            soil_fertilizer_start = i + 1;
+        }
+        else if read_lines[i].contains("fertilizer-to-water map:") {
+            //Seed to soil starts at i + 1
+            fertilizer_water_start = i + 1;
+        }
+        else if read_lines[i].contains("water-to-light map:") {
+            //Seed to soil starts at i + 1
+            water_light_start = i + 1;
+        }
+        else if read_lines[i].contains("light-to-temperature map:") {
+            //Seed to soil starts at i + 1
+            light_temperature_start = i + 1;
+        }
+        else if read_lines[i].contains("temperature-to-humidity map:") {
+            //Seed to soil starts at i + 1
+            temperature_humidity_start = i + 1;
+        }
+        else if read_lines[i].contains("humidity-to-location map:") {
+            //Seed to soil starts at i + 1
+            humidity_location_start = i + 1;
         }
     }
+
+    let seeds: Vec<&str> = read_lines[seed_start].split(" ").collect();
+    for seed in seeds {
+        println!("Seed: {}", seed);
+    }
+
 }
 
 //part 1:
