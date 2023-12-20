@@ -1,5 +1,6 @@
 use std::fs::File;
 use std::io::{self, BufRead};
+use std::collections::HashMap;
 
 // Function to read a file line by line and return a vector of strings
 fn read_file_lines(file_path: &str) -> io::Result<Vec<String>> {
@@ -38,6 +39,7 @@ fn main() {
         }
     }
 
+    let mut seed_soil_map: HashMap<i32, i32>=HashMap::new();
     let mut seed_start: usize = 1;
     let mut seed_soil_start: usize = 0;
     let mut soil_fertilizer_start: usize = 0;
@@ -84,9 +86,40 @@ fn main() {
         println!("Seed: {}", seed);
     }
 
+    for i in seed_soil_start..soil_fertilizer_start - 2 {
+        //split line on " "
+        let source_dest_range:Vec<&str> = read_lines[i].split(" ").collect();
+        println!("::::::::::[DEBUG]::::::::");
+        for item in &source_dest_range {
+            println!("element after split: {}", item);
+        }
+
+        let range: i32 = source_dest_range[2].parse().unwrap();
+        for j in 0..range {
+            let mut source: i32 = source_dest_range[1].parse().unwrap();
+            let mut destination: i32 = source_dest_range[0].parse().unwrap();
+            source  += j;
+            destination += j;
+            seed_soil_map.insert(source, destination);
+        }
+    }
+    let test_seed = 50;
+    println!("Seed: {} should be at soil: {}", test_seed, seed_soil_map[&test_seed]);
+
+
 }
 
 //part 1:
 //goal: so they'd like to know the closest location that needs a seed.
 //Map source to destination trough each map to get location for each seed
+//Create list of seed numbers corresponding to soil numbers
+//Create source list from number to number + range
+//Create destination list from number to number + range
+//hashmap key: int (source) value: int (destination)
+//Seed-to-soil
+//destination source range
+//50 98 2
+//for 0..range
+    //add key 50 to hashmap with value 98
+    //add key 51 to hasmap with value 99
 
