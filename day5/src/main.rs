@@ -22,10 +22,8 @@ fn read_file_lines(file_path: &str) -> io::Result<Vec<String>> {
     Ok(lines)
 }
 
-struct Map {
-    destination: Vec<i32>,
-    source: Vec<i32>,
-    range: i32,
+fn check_if_value_exist_in_map(map: &HashMap<i32, i32>, check: &i32) -> bool {
+    return map.contains_key(&check);
 }
 
 fn main() {
@@ -40,6 +38,7 @@ fn main() {
     }
 
     let mut seed_soil_map: HashMap<i32, i32>=HashMap::new();
+    let mut soil_fertilizer_map: HashMap<i32, i32>=HashMap::new();
     let mut seed_start: usize = 1;
     let mut seed_soil_start: usize = 0;
     let mut soil_fertilizer_start: usize = 0;
@@ -86,6 +85,7 @@ fn main() {
         println!("Seed: {}", seed);
     }
 
+    let mut max_seed_nmbr: i32 = 0;
     for i in seed_soil_start..soil_fertilizer_start - 2 {
         //split line on " "
         let source_dest_range:Vec<&str> = read_lines[i].split(" ").collect();
@@ -93,21 +93,47 @@ fn main() {
         for item in &source_dest_range {
             println!("element after split: {}", item);
         }
-
+        let mut destination: i32 = source_dest_range[0].parse().unwrap();
+        let mut source: i32 = source_dest_range[1].parse().unwrap();
         let range: i32 = source_dest_range[2].parse().unwrap();
+
+        if (source + range - 1) > max_seed_nmbr {
+            max_seed_nmbr = source + range - 1;
+        } 
+
         for j in 0..range {
-            let mut source: i32 = source_dest_range[1].parse().unwrap();
-            let mut destination: i32 = source_dest_range[0].parse().unwrap();
-            source  += j;
-            destination += j;
-            seed_soil_map.insert(source, destination);
+            //source  += j;
+            //destination += j;
+            //println!("Add seed {} with soil {}", source + j, destination + j);
+            seed_soil_map.insert(source + j, destination + j);
         }
     }
-    let test_seed = 50;
+
+    for i in 0..max_seed_nmbr {
+        if !seed_soil_map.contains_key(&i) {
+            //println!("map does not contain: {}", i);
+            seed_soil_map.insert(i, i);
+        }
+    }
+
+    let mut test_seed = 50;
+    println!("Seed: {} should be at soil: {}", test_seed, seed_soil_map[&test_seed]);
+    test_seed = 98;
+    println!("Seed: {} should be at soil: {}", test_seed, seed_soil_map[&test_seed]);
+    test_seed = 99;
+    println!("Seed: {} should be at soil: {}", test_seed, seed_soil_map[&test_seed]);
+    test_seed = 79;
+    println!("Seed: {} should be at soil: {}", test_seed, seed_soil_map[&test_seed]);
+    test_seed = 14;
+    println!("Seed: {} should be at soil: {}", test_seed, seed_soil_map[&test_seed]);
+    test_seed = 55;
+    println!("Seed: {} should be at soil: {}", test_seed, seed_soil_map[&test_seed]);
+    test_seed = 13;
     println!("Seed: {} should be at soil: {}", test_seed, seed_soil_map[&test_seed]);
 
 
 }
+
 
 //part 1:
 //goal: so they'd like to know the closest location that needs a seed.
