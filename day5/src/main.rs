@@ -22,10 +22,6 @@ fn read_file_lines(file_path: &str) -> io::Result<Vec<String>> {
     Ok(lines)
 }
 
-fn check_if_value_exist_in_map(map: &HashMap<i32, i32>, check: &i32) -> bool {
-    return map.contains_key(&check);
-}
-
 fn main() {
     let mut read_lines = Vec::new();
     match read_file_lines("example.txt") {
@@ -39,6 +35,11 @@ fn main() {
 
     let mut seed_soil_map: HashMap<i32, i32>=HashMap::new();
     let mut soil_fertilizer_map: HashMap<i32, i32>=HashMap::new();
+    let mut fertilizer_water_map: HashMap<i32, i32>=HashMap::new();
+    let mut water_light_map: HashMap<i32, i32>=HashMap::new();
+    let mut light_temperature_map: HashMap<i32, i32>=HashMap::new();
+    let mut temperature_humidity_map: HashMap<i32, i32>=HashMap::new();
+    let mut humidity_location_map: HashMap<i32, i32>=HashMap::new();
     let mut seed_start: usize = 1;
     let mut seed_soil_start: usize = 0;
     let mut soil_fertilizer_start: usize = 0;
@@ -47,9 +48,10 @@ fn main() {
     let mut light_temperature_start: usize = 0;
     let mut temperature_humidity_start: usize = 0;
     let mut humidity_location_start: usize = 0;
+    let mut stop: usize = 0;
 
     for i in 0..read_lines.len() {
-        let line: &String = &read_lines[i];
+        //let line: &String = &read_lines[i];
         //println!("{}",read_lines[i]);
         if read_lines[i].contains("seed-to-soil map:") {
             //Seed to soil starts at i + 1
@@ -78,6 +80,10 @@ fn main() {
             //Seed to soil starts at i + 1
             humidity_location_start = i + 1;
         }
+        else if read_lines[i].contains("stop") {
+            //Seed to soil starts at i + 1
+            stop = i + 1;
+        }
     }
 
     let seeds: Vec<&str> = read_lines[seed_start].split(" ").collect();
@@ -85,37 +91,26 @@ fn main() {
         println!("Seed: {}", seed);
     }
 
-    let mut max_seed_nmbr: i32 = 0;
+    //Seed to soil
+    //let mut max_seed_nmbr: i32 = 0;
     for i in seed_soil_start..soil_fertilizer_start - 2 {
         //split line on " "
         let source_dest_range:Vec<&str> = read_lines[i].split(" ").collect();
-        println!("::::::::::[DEBUG]::::::::");
-        for item in &source_dest_range {
-            println!("element after split: {}", item);
-        }
-        let mut destination: i32 = source_dest_range[0].parse().unwrap();
-        let mut source: i32 = source_dest_range[1].parse().unwrap();
+        // println!("::::::::::[DEBUG]::::::::");
+        // for item in &source_dest_range {
+        //     println!("element after split: {}", item);
+        // }
+        let destination: i32 = source_dest_range[0].parse().unwrap();
+        let source: i32 = source_dest_range[1].parse().unwrap();
         let range: i32 = source_dest_range[2].parse().unwrap();
 
-        if (source + range - 1) > max_seed_nmbr {
-            max_seed_nmbr = source + range - 1;
-        } 
-
-        for j in 0..range {
-            //source  += j;
-            //destination += j;
-            //println!("Add seed {} with soil {}", source + j, destination + j);
-            seed_soil_map.insert(source + j, destination + j);
-        }
+        // if (source + range - 1) > max_seed_nmbr {
+        //     max_seed_nmbr = source + range - 1;
+        // }
+        insert_into_map(&mut seed_soil_map, source, destination, range);
     }
 
-    for i in 0..max_seed_nmbr {
-        if !seed_soil_map.contains_key(&i) {
-            //println!("map does not contain: {}", i);
-            seed_soil_map.insert(i, i);
-        }
-    }
-
+    insert_rest_of_numbers(&mut seed_soil_map, 1000);
     let mut test_seed = 50;
     println!("Seed: {} should be at soil: {}", test_seed, seed_soil_map[&test_seed]);
     test_seed = 98;
@@ -132,8 +127,207 @@ fn main() {
     println!("Seed: {} should be at soil: {}", test_seed, seed_soil_map[&test_seed]);
 
 
+    //soil to fertilizer
+    //let mut max_soil_nmbr: i32 = 0;
+    for i in soil_fertilizer_start..fertilizer_water_start - 2 {
+
+        let source_dest_range:Vec<&str> = read_lines[i].split(" ").collect();
+        // println!("::::::::::[DEBUG]::::::::");
+        // for item in &source_dest_range {
+        //     println!("element after split: {}", item);
+        // }
+
+        let destination: i32 = source_dest_range[0].parse().unwrap();
+        let source: i32 = source_dest_range[1].parse().unwrap();
+        let range: i32 = source_dest_range[2].parse().unwrap();
+
+        // if (source + range - 1) > max_soil_nmbr {
+        //     max_soil_nmbr = source + range - 1;
+        // }
+        insert_into_map(&mut soil_fertilizer_map, source, destination, range);
+    }
+    insert_rest_of_numbers(&mut soil_fertilizer_map, 1000);
+
+    let mut test_soil = 81;
+    println!("Soil: {} should use fertilizer: {}", test_soil, soil_fertilizer_map[&test_soil]);
+    test_soil = 14;
+    println!("Soil: {} should use fertilizer: {}", test_soil, soil_fertilizer_map[&test_soil]);
+    test_soil = 57;
+    println!("Soil: {} should use fertilizer: {}", test_soil, soil_fertilizer_map[&test_soil]);
+    test_soil = 13;
+    println!("Soil: {} should use fertilizer: {}", test_soil, soil_fertilizer_map[&test_soil]);
+
+    //fertilizer to water
+    for i in fertilizer_water_start..water_light_start - 2 {
+
+        let source_dest_range:Vec<&str> = read_lines[i].split(" ").collect();
+        // println!("::::::::::[DEBUG]::::::::");
+        // for item in &source_dest_range {
+        //     println!("element after split: {}", item);
+        // }
+
+        let destination: i32 = source_dest_range[0].parse().unwrap();
+        let source: i32 = source_dest_range[1].parse().unwrap();
+        let range: i32 = source_dest_range[2].parse().unwrap();
+
+        insert_into_map(&mut fertilizer_water_map, source, destination, range);
+    }
+    insert_rest_of_numbers(&mut fertilizer_water_map, 1000);
+
+    let mut test_fertilizer = 81;
+    println!("fertilizer: {} should use water: {}", test_fertilizer, fertilizer_water_map[&test_fertilizer]);
+    test_fertilizer = 53;
+    println!("fertilizer: {} should use water: {}", test_fertilizer, fertilizer_water_map[&test_fertilizer]);
+    test_fertilizer = 57;
+    println!("fertilizer: {} should use water: {}", test_fertilizer, fertilizer_water_map[&test_fertilizer]);
+    test_fertilizer = 52;
+    println!("fertilizer: {} should use water: {}", test_fertilizer, fertilizer_water_map[&test_fertilizer]);
+
+        //water to light
+        for i in water_light_start..light_temperature_start - 2 {
+
+            let source_dest_range:Vec<&str> = read_lines[i].split(" ").collect();
+            // println!("::::::::::[DEBUG]::::::::");
+            // for item in &source_dest_range {
+            //     println!("element after split: {}", item);
+            // }
+    
+            let destination: i32 = source_dest_range[0].parse().unwrap();
+            let source: i32 = source_dest_range[1].parse().unwrap();
+            let range: i32 = source_dest_range[2].parse().unwrap();
+    
+            insert_into_map(&mut water_light_map, source, destination, range);
+        }
+        insert_rest_of_numbers(&mut water_light_map, 1000);
+    
+        let mut test_water = 81;
+        println!("water: {} should use light: {}", test_water, water_light_map[&test_water]);
+        test_water = 49;
+        println!("water: {} should use light: {}", test_water, water_light_map[&test_water]);
+        test_water = 53;
+        println!("water: {} should use light: {}", test_water, water_light_map[&test_water]);
+        test_water = 41;
+        println!("water: {} should use light: {}", test_water, water_light_map[&test_water]);
+
+        //light to temperature
+        for i in light_temperature_start..temperature_humidity_start - 2 {
+
+            let source_dest_range:Vec<&str> = read_lines[i].split(" ").collect();
+            // println!("::::::::::[DEBUG]::::::::");
+            // for item in &source_dest_range {
+            //     println!("element after split: {}", item);
+            // }
+    
+            let destination: i32 = source_dest_range[0].parse().unwrap();
+            let source: i32 = source_dest_range[1].parse().unwrap();
+            let range: i32 = source_dest_range[2].parse().unwrap();
+    
+            insert_into_map(&mut light_temperature_map, source, destination, range);
+        }
+        insert_rest_of_numbers(&mut light_temperature_map, 1000);
+    
+        let mut test_light = 74;
+        println!("light: {} should use temperature: {}", test_light, light_temperature_map[&test_light]);
+        test_light = 42;
+        println!("light: {} should use temperature: {}", test_light, light_temperature_map[&test_light]);
+        test_light = 46;
+        println!("light: {} should use temperature: {}", test_light, light_temperature_map[&test_light]);
+        test_light = 34;
+        println!("light: {} should use temperature: {}", test_light, light_temperature_map[&test_light]);
+
+                //light to temperature
+        for i in light_temperature_start..temperature_humidity_start - 2 {
+
+            let source_dest_range:Vec<&str> = read_lines[i].split(" ").collect();
+            // println!("::::::::::[DEBUG]::::::::");
+            // for item in &source_dest_range {
+            //     println!("element after split: {}", item);
+            // }
+    
+            let destination: i32 = source_dest_range[0].parse().unwrap();
+            let source: i32 = source_dest_range[1].parse().unwrap();
+            let range: i32 = source_dest_range[2].parse().unwrap();
+    
+            insert_into_map(&mut light_temperature_map, source, destination, range);
+        }
+        insert_rest_of_numbers(&mut light_temperature_map, 1000);
+    
+        let mut test_light = 74;
+        println!("light: {} should use temperature: {}", test_light, light_temperature_map[&test_light]);
+        test_light = 42;
+        println!("light: {} should use temperature: {}", test_light, light_temperature_map[&test_light]);
+        test_light = 46;
+        println!("light: {} should use temperature: {}", test_light, light_temperature_map[&test_light]);
+        test_light = 34;
+        println!("light: {} should use temperature: {}", test_light, light_temperature_map[&test_light]);
+
+        //temperature to humidity
+        for i in temperature_humidity_start..humidity_location_start - 2 {
+
+            let source_dest_range:Vec<&str> = read_lines[i].split(" ").collect();
+            // println!("::::::::::[DEBUG]::::::::");
+            // for item in &source_dest_range {
+            //     println!("element after split: {}", item);
+            // }
+    
+            let destination: i32 = source_dest_range[0].parse().unwrap();
+            let source: i32 = source_dest_range[1].parse().unwrap();
+            let range: i32 = source_dest_range[2].parse().unwrap();
+    
+            insert_into_map(&mut temperature_humidity_map, source, destination, range);
+        }
+        insert_rest_of_numbers(&mut temperature_humidity_map, 1000);
+    
+        let mut test_temperature = 78;
+        println!("temperature: {} should use humidity: {}", test_temperature, temperature_humidity_map[&test_temperature]);
+        test_temperature = 42;
+        println!("temperature: {} should use humidity: {}", test_temperature, temperature_humidity_map[&test_temperature]);
+        test_temperature = 82;
+        println!("temperature: {} should use humidity: {}", test_temperature, temperature_humidity_map[&test_temperature]);
+        test_temperature = 34;
+        println!("temperature: {} should use humidity: {}", test_temperature, temperature_humidity_map[&test_temperature]);
+
+        //humidity to location
+        for i in humidity_location_start..stop - 2 { //??
+
+            let source_dest_range:Vec<&str> = read_lines[i].split(" ").collect();
+            // println!("::::::::::[DEBUG]::::::::");
+            // for item in &source_dest_range {
+            //     println!("element after split: {}", item);
+            // }
+    
+            let destination: i32 = source_dest_range[0].parse().unwrap();
+            let source: i32 = source_dest_range[1].parse().unwrap();
+            let range: i32 = source_dest_range[2].parse().unwrap();
+    
+            insert_into_map(&mut humidity_location_map, source, destination, range);
+        }
+        insert_rest_of_numbers(&mut humidity_location_map, 1000);
+    
+        let mut test_humidity = 78;
+        println!("humidity: {} should use location: {}", test_humidity, humidity_location_map[&test_humidity]);
+        test_humidity = 43;
+        println!("humidity: {} should use location: {}", test_humidity, humidity_location_map[&test_humidity]);
+        test_humidity = 82;
+        println!("humidity: {} should use location: {}", test_humidity, humidity_location_map[&test_humidity]);
+        test_humidity = 35;
+        println!("humidity: {} should use location: {}", test_humidity, humidity_location_map[&test_humidity]);
+
+    }
+
+fn insert_into_map(map: &mut HashMap<i32, i32>, source: i32, destination: i32, range: i32) {
+    for i in 0..range {
+        map.insert(source + i, destination + i);
+    }
 }
 
+fn insert_rest_of_numbers(map: &mut HashMap<i32, i32>, max_number: i32) {
+    for i in 0..max_number {
+        if !map.contains_key(&i) {
+            map.insert(i, i);
+        }
+    }
+}
 
 //part 1:
 //goal: so they'd like to know the closest location that needs a seed.
