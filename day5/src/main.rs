@@ -24,7 +24,7 @@ fn read_file_lines(file_path: &str) -> io::Result<Vec<String>> {
 
 fn main() {
     let mut read_lines = Vec::new();
-    match read_file_lines("input.txt") {
+    match read_file_lines("example.txt") {
         Ok(lines) => { //behäver man alltid hantera ok och err när man kallat på en fn?
             read_lines = lines
         }
@@ -49,7 +49,7 @@ fn main() {
     let mut temperature_humidity_start: usize = 0;
     let mut humidity_location_start: usize = 0;
     let mut stop: usize = 0;
-    let max_number = 999999;
+    let max_number = 999;
 
     for i in 0..read_lines.len() {
         //let line: &String = &read_lines[i];
@@ -94,6 +94,154 @@ fn main() {
 
     //Seed to soil
     //let mut max_seed_nmbr: i32 = 0;
+    println!("---------New------------");
+    let mut temp_seed: i64 = 0;
+    for seed in &seeds {
+        temp_seed = seed.parse().unwrap();
+        println!("--------------");
+        println!("New seed: {}", temp_seed);
+        let mut result: i64 = 0;
+        for i in seed_soil_start..soil_fertilizer_start - 2 {
+            let source_dest_range:Vec<&str> = read_lines[i].split(" ").collect();
+            let destination: i64 = source_dest_range[0].parse().unwrap();
+            let source: i64 = source_dest_range[1].parse().unwrap();
+            let range: i64 = source_dest_range[2].parse().unwrap();
+            if temp_seed > source && temp_seed < source + range {
+                // println!("temp_seed: {}", temp_seed);
+                // println!("destination: {}", destination);
+                // println!("range: {}", range);
+                // println!("source: {}", source);
+                result = temp_seed - source + destination;
+                // println!("result: {}", result);
+            }
+        }
+        if result == 0 {
+            result = temp_seed;
+        }
+        println!("Seed: {} should be at soil: {}", temp_seed, result);
+
+        let temp_soil: i64 = result;
+        for i in soil_fertilizer_start..fertilizer_water_start - 2 {
+            let source_dest_range:Vec<&str> = read_lines[i].split(" ").collect();
+            let destination: i64 = source_dest_range[0].parse().unwrap();
+            let source: i64 = source_dest_range[1].parse().unwrap();
+            let range: i64 = source_dest_range[2].parse().unwrap();
+            if temp_soil > source && temp_soil < source + range {
+                // println!("temp_seed: {}", temp_seed);
+                // println!("destination: {}", destination);
+                // println!("range: {}", range);
+                // println!("source: {}", source);
+                result = temp_soil - source + destination;
+                // println!("result: {}", result);
+            }
+        }
+        if result == 0 {
+            result = temp_soil;
+        }
+        println!("Soil: {} should use fertilizer: {}", temp_soil, result);
+
+        let temp_fertilizer: i64 = result;
+        for i in fertilizer_water_start..water_light_start - 2 {
+            let source_dest_range:Vec<&str> = read_lines[i].split(" ").collect();
+            let destination: i64 = source_dest_range[0].parse().unwrap();
+            let source: i64 = source_dest_range[1].parse().unwrap();
+            let range: i64 = source_dest_range[2].parse().unwrap();
+            if temp_fertilizer > source && temp_fertilizer < source + range {
+                // println!("temp_seed: {}", temp_seed);
+                // println!("destination: {}", destination);
+                // println!("range: {}", range);
+                // println!("source: {}", source);
+                result = temp_fertilizer - source + destination;
+                // println!("result: {}", result);
+            }
+        }
+        if result == 0 {
+            result = temp_fertilizer;
+        }
+        println!("fertilizer: {} should use water: {}", temp_fertilizer, result);
+
+        let temp_water: i64 = result;
+        for i in water_light_start..light_temperature_start - 2 {
+            let source_dest_range:Vec<&str> = read_lines[i].split(" ").collect();
+            let destination: i64 = source_dest_range[0].parse().unwrap();
+            let source: i64 = source_dest_range[1].parse().unwrap();
+            let range: i64 = source_dest_range[2].parse().unwrap();
+            if temp_water > source && temp_water < source + range {
+                // println!("temp_seed: {}", temp_seed);
+                // println!("destination: {}", destination);
+                // println!("range: {}", range);
+                // println!("source: {}", source);
+                result = temp_water - source + destination;
+                // println!("result: {}", result);
+            }
+        }
+        if result == 0 {
+            result = temp_water;
+        }
+        println!("water: {} should use light: {}", temp_water, result);
+
+        let temp_light: i64 = result;
+        for i in light_temperature_start..temperature_humidity_start - 2 {
+            let source_dest_range:Vec<&str> = read_lines[i].split(" ").collect();
+            let destination: i64 = source_dest_range[0].parse().unwrap();
+            let source: i64 = source_dest_range[1].parse().unwrap();
+            let range: i64 = source_dest_range[2].parse().unwrap();
+            if temp_light > source && temp_light < source + range {
+                // println!("temp_seed: {}", temp_seed);
+                // println!("destination: {}", destination);
+                // println!("range: {}", range);
+                // println!("source: {}", source);
+                result = temp_light - source + destination;
+                // println!("result: {}", result);
+            }
+        }
+        if result == 0 {
+            result = temp_light;
+        }
+        println!("light: {} should use temperature: {}", temp_light, result);
+
+        let temp_humidity: i64 = result;
+        for i in temperature_humidity_start..humidity_location_start - 2 {
+            let source_dest_range:Vec<&str> = read_lines[i].split(" ").collect();
+            let destination: i64 = source_dest_range[0].parse().unwrap();
+            let source: i64 = source_dest_range[1].parse().unwrap();
+            let range: i64 = source_dest_range[2].parse().unwrap();
+            if temp_humidity > source && temp_humidity < source + range {
+                // println!("temp_seed: {}", temp_seed);
+                // println!("destination: {}", destination);
+                // println!("range: {}", range);
+                // println!("source: {}", source);
+                result = temp_humidity - source + destination;
+                // println!("result: {}", result);
+            }
+        }
+        if result == 0 {
+            result = temp_humidity;
+        }
+        println!("temperature: {} should use humidity: {}", temp_humidity, result);
+
+        let temp_location: i64 = result;
+        for i in humidity_location_start..stop - 2 {
+            let source_dest_range:Vec<&str> = read_lines[i].split(" ").collect();
+            let destination: i64 = source_dest_range[0].parse().unwrap();
+            let source: i64 = source_dest_range[1].parse().unwrap();
+            let range: i64 = source_dest_range[2].parse().unwrap();
+            if temp_location > source && temp_location < source + range {
+                // println!("temp_seed: {}", temp_seed);
+                // println!("destination: {}", destination);
+                // println!("range: {}", range);
+                // println!("source: {}", source);
+                result = temp_location - source + destination;
+                // println!("result: {}", result);
+            }
+        }
+        if result == 0 {
+            result = temp_location;
+        }
+        println!("humidity: {} should use location: {}", temp_location, result);
+    }
+    println!("------------------------");
+
     print!("Seed to soil");
     for i in seed_soil_start..soil_fertilizer_start - 2 {
         //split line on " "
