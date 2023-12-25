@@ -24,7 +24,7 @@ fn read_file_lines(file_path: &str) -> io::Result<Vec<String>> {
 
 fn main() {
     let mut read_lines = Vec::new();
-    match read_file_lines("example.txt") {
+    match read_file_lines("input.txt") {
         Ok(lines) => { //behäver man alltid hantera ok och err när man kallat på en fn?
             read_lines = lines
         }
@@ -33,14 +33,14 @@ fn main() {
         }
     }
 
-    let mut seed_soil_map: HashMap<i32, i32>=HashMap::new();
-    let mut soil_fertilizer_map: HashMap<i32, i32>=HashMap::new();
-    let mut fertilizer_water_map: HashMap<i32, i32>=HashMap::new();
-    let mut water_light_map: HashMap<i32, i32>=HashMap::new();
-    let mut light_temperature_map: HashMap<i32, i32>=HashMap::new();
-    let mut temperature_humidity_map: HashMap<i32, i32>=HashMap::new();
-    let mut humidity_location_map: HashMap<i32, i32>=HashMap::new();
-    let mut seed_start: usize = 1;
+    let mut seed_soil_map: HashMap<i64, i64>=HashMap::new();
+    let mut soil_fertilizer_map: HashMap<i64, i64>=HashMap::new();
+    let mut fertilizer_water_map: HashMap<i64, i64>=HashMap::new();
+    let mut water_light_map: HashMap<i64, i64>=HashMap::new();
+    let mut light_temperature_map: HashMap<i64, i64>=HashMap::new();
+    let mut temperature_humidity_map: HashMap<i64, i64>=HashMap::new();
+    let mut humidity_location_map: HashMap<i64, i64>=HashMap::new();
+    let seed_start: usize = 1;
     let mut seed_soil_start: usize = 0;
     let mut soil_fertilizer_start: usize = 0;
     let mut fertilizer_water_start: usize = 0;
@@ -49,6 +49,7 @@ fn main() {
     let mut temperature_humidity_start: usize = 0;
     let mut humidity_location_start: usize = 0;
     let mut stop: usize = 0;
+    let max_number = 999999;
 
     for i in 0..read_lines.len() {
         //let line: &String = &read_lines[i];
@@ -87,12 +88,13 @@ fn main() {
     }
 
     let seeds: Vec<&str> = read_lines[seed_start].split(" ").collect();
-    for seed in seeds {
-        println!("Seed: {}", seed);
-    }
+    // for seed in seeds {
+    //     println!("Seed: {}", seed);
+    // }
 
     //Seed to soil
     //let mut max_seed_nmbr: i32 = 0;
+    print!("Seed to soil");
     for i in seed_soil_start..soil_fertilizer_start - 2 {
         //split line on " "
         let source_dest_range:Vec<&str> = read_lines[i].split(" ").collect();
@@ -100,9 +102,9 @@ fn main() {
         // for item in &source_dest_range {
         //     println!("element after split: {}", item);
         // }
-        let destination: i32 = source_dest_range[0].parse().unwrap();
-        let source: i32 = source_dest_range[1].parse().unwrap();
-        let range: i32 = source_dest_range[2].parse().unwrap();
+        let destination: i64 = source_dest_range[0].parse().unwrap();
+        let source: i64 = source_dest_range[1].parse().unwrap();
+        let range: i64 = source_dest_range[2].parse().unwrap();
 
         // if (source + range - 1) > max_seed_nmbr {
         //     max_seed_nmbr = source + range - 1;
@@ -110,13 +112,13 @@ fn main() {
         insert_into_map(&mut seed_soil_map, source, destination, range);
     }
 
-    insert_rest_of_numbers(&mut seed_soil_map, 1000);
+    insert_rest_of_numbers(&mut seed_soil_map, max_number);
     let mut test_seed = 50;
-    println!("Seed: {} should be at soil: {}", test_seed, seed_soil_map[&test_seed]);
-    test_seed = 98;
-    println!("Seed: {} should be at soil: {}", test_seed, seed_soil_map[&test_seed]);
-    test_seed = 99;
-    println!("Seed: {} should be at soil: {}", test_seed, seed_soil_map[&test_seed]);
+    // println!("Seed: {} should be at soil: {}", test_seed, seed_soil_map[&test_seed]);
+    // test_seed = 98;
+    // println!("Seed: {} should be at soil: {}", test_seed, seed_soil_map[&test_seed]);
+    // test_seed = 99;
+    // println!("Seed: {} should be at soil: {}", test_seed, seed_soil_map[&test_seed]);
     test_seed = 79;
     println!("Seed: {} should be at soil: {}", test_seed, seed_soil_map[&test_seed]);
     test_seed = 14;
@@ -137,16 +139,16 @@ fn main() {
         //     println!("element after split: {}", item);
         // }
 
-        let destination: i32 = source_dest_range[0].parse().unwrap();
-        let source: i32 = source_dest_range[1].parse().unwrap();
-        let range: i32 = source_dest_range[2].parse().unwrap();
+        let destination: i64 = source_dest_range[0].parse().unwrap();
+        let source: i64 = source_dest_range[1].parse().unwrap();
+        let range: i64 = source_dest_range[2].parse().unwrap();
 
         // if (source + range - 1) > max_soil_nmbr {
         //     max_soil_nmbr = source + range - 1;
         // }
         insert_into_map(&mut soil_fertilizer_map, source, destination, range);
     }
-    insert_rest_of_numbers(&mut soil_fertilizer_map, 1000);
+    insert_rest_of_numbers(&mut soil_fertilizer_map, max_number);
 
     let mut test_soil = 81;
     println!("Soil: {} should use fertilizer: {}", test_soil, soil_fertilizer_map[&test_soil]);
@@ -166,13 +168,13 @@ fn main() {
         //     println!("element after split: {}", item);
         // }
 
-        let destination: i32 = source_dest_range[0].parse().unwrap();
-        let source: i32 = source_dest_range[1].parse().unwrap();
-        let range: i32 = source_dest_range[2].parse().unwrap();
+        let destination: i64 = source_dest_range[0].parse().unwrap();
+        let source: i64 = source_dest_range[1].parse().unwrap();
+        let range: i64 = source_dest_range[2].parse().unwrap();
 
         insert_into_map(&mut fertilizer_water_map, source, destination, range);
     }
-    insert_rest_of_numbers(&mut fertilizer_water_map, 1000);
+    insert_rest_of_numbers(&mut fertilizer_water_map, max_number);
 
     let mut test_fertilizer = 81;
     println!("fertilizer: {} should use water: {}", test_fertilizer, fertilizer_water_map[&test_fertilizer]);
@@ -192,13 +194,13 @@ fn main() {
             //     println!("element after split: {}", item);
             // }
     
-            let destination: i32 = source_dest_range[0].parse().unwrap();
-            let source: i32 = source_dest_range[1].parse().unwrap();
-            let range: i32 = source_dest_range[2].parse().unwrap();
+            let destination: i64 = source_dest_range[0].parse().unwrap();
+            let source: i64 = source_dest_range[1].parse().unwrap();
+            let range: i64 = source_dest_range[2].parse().unwrap();
     
             insert_into_map(&mut water_light_map, source, destination, range);
         }
-        insert_rest_of_numbers(&mut water_light_map, 1000);
+        insert_rest_of_numbers(&mut water_light_map, max_number);
     
         let mut test_water = 81;
         println!("water: {} should use light: {}", test_water, water_light_map[&test_water]);
@@ -218,13 +220,13 @@ fn main() {
             //     println!("element after split: {}", item);
             // }
     
-            let destination: i32 = source_dest_range[0].parse().unwrap();
-            let source: i32 = source_dest_range[1].parse().unwrap();
-            let range: i32 = source_dest_range[2].parse().unwrap();
+            let destination: i64 = source_dest_range[0].parse().unwrap();
+            let source: i64 = source_dest_range[1].parse().unwrap();
+            let range: i64 = source_dest_range[2].parse().unwrap();
     
             insert_into_map(&mut light_temperature_map, source, destination, range);
         }
-        insert_rest_of_numbers(&mut light_temperature_map, 1000);
+        insert_rest_of_numbers(&mut light_temperature_map, max_number);
     
         let mut test_light = 74;
         println!("light: {} should use temperature: {}", test_light, light_temperature_map[&test_light]);
@@ -244,13 +246,13 @@ fn main() {
             //     println!("element after split: {}", item);
             // }
     
-            let destination: i32 = source_dest_range[0].parse().unwrap();
-            let source: i32 = source_dest_range[1].parse().unwrap();
-            let range: i32 = source_dest_range[2].parse().unwrap();
+            let destination: i64 = source_dest_range[0].parse().unwrap();
+            let source: i64 = source_dest_range[1].parse().unwrap();
+            let range: i64 = source_dest_range[2].parse().unwrap();
     
             insert_into_map(&mut light_temperature_map, source, destination, range);
         }
-        insert_rest_of_numbers(&mut light_temperature_map, 1000);
+        insert_rest_of_numbers(&mut light_temperature_map, max_number);
     
         let mut test_light = 74;
         println!("light: {} should use temperature: {}", test_light, light_temperature_map[&test_light]);
@@ -270,13 +272,13 @@ fn main() {
             //     println!("element after split: {}", item);
             // }
     
-            let destination: i32 = source_dest_range[0].parse().unwrap();
-            let source: i32 = source_dest_range[1].parse().unwrap();
-            let range: i32 = source_dest_range[2].parse().unwrap();
+            let destination: i64 = source_dest_range[0].parse().unwrap();
+            let source: i64 = source_dest_range[1].parse().unwrap();
+            let range: i64 = source_dest_range[2].parse().unwrap();
     
             insert_into_map(&mut temperature_humidity_map, source, destination, range);
         }
-        insert_rest_of_numbers(&mut temperature_humidity_map, 1000);
+        insert_rest_of_numbers(&mut temperature_humidity_map, max_number);
     
         let mut test_temperature = 78;
         println!("temperature: {} should use humidity: {}", test_temperature, temperature_humidity_map[&test_temperature]);
@@ -296,13 +298,13 @@ fn main() {
             //     println!("element after split: {}", item);
             // }
     
-            let destination: i32 = source_dest_range[0].parse().unwrap();
-            let source: i32 = source_dest_range[1].parse().unwrap();
-            let range: i32 = source_dest_range[2].parse().unwrap();
+            let destination: i64 = source_dest_range[0].parse().unwrap();
+            let source: i64 = source_dest_range[1].parse().unwrap();
+            let range: i64 = source_dest_range[2].parse().unwrap();
     
             insert_into_map(&mut humidity_location_map, source, destination, range);
         }
-        insert_rest_of_numbers(&mut humidity_location_map, 1000);
+        insert_rest_of_numbers(&mut humidity_location_map, max_number);
     
         let mut test_humidity = 78;
         println!("humidity: {} should use location: {}", test_humidity, humidity_location_map[&test_humidity]);
@@ -313,15 +315,32 @@ fn main() {
         test_humidity = 35;
         println!("humidity: {} should use location: {}", test_humidity, humidity_location_map[&test_humidity]);
 
+        //Seed-to-soil
+        let mut temp: i64 = 0;
+        let mut low_location: i64 = 9999999;
+        for seed in seeds {
+            temp = seed.parse().unwrap();
+            temp = seed_soil_map[&temp];
+            temp = soil_fertilizer_map[&temp];
+            temp = fertilizer_water_map[&temp];
+            temp = water_light_map[&temp];
+            temp = light_temperature_map[&temp];
+            temp = temperature_humidity_map[&temp];
+            temp = humidity_location_map[&temp];
+            if temp < low_location {
+                low_location = temp;
+            }
+        }
+        print!("lowest location is {}", low_location);
     }
 
-fn insert_into_map(map: &mut HashMap<i32, i32>, source: i32, destination: i32, range: i32) {
+fn insert_into_map(map: &mut HashMap<i64, i64>, source: i64, destination: i64, range: i64) {
     for i in 0..range {
         map.insert(source + i, destination + i);
     }
 }
 
-fn insert_rest_of_numbers(map: &mut HashMap<i32, i32>, max_number: i32) {
+fn insert_rest_of_numbers(map: &mut HashMap<i64, i64>, max_number: i64) {
     for i in 0..max_number {
         if !map.contains_key(&i) {
             map.insert(i, i);
